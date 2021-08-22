@@ -100,7 +100,7 @@ async function sendRawTx({ data, nonce, to, privateKey, url, gasPrice, value }) 
       data
     }
     const estimatedGas = BigNumber(await sendNodeRequest(url, 'eth_estimateGas', txToEstimateGas))
-
+    const chainId = await sendNodeRequest(url, 'eth_chainId',[])
     const blockData = await sendNodeRequest(url, 'eth_getBlockByNumber', ['latest', false])
     const blockGasLimit = BigNumber(blockData.gasLimit)
     if (estimatedGas.isGreaterThan(blockGasLimit)) {
@@ -115,7 +115,8 @@ async function sendRawTx({ data, nonce, to, privateKey, url, gasPrice, value }) 
       gas = gas.toFixed(0)
     }
 
-    const rawTx = {
+    const rawTx = { 
+      chainId,
       nonce,
       gasPrice: Web3Utils.toHex(gasPrice),
       gasLimit: Web3Utils.toHex(gas),
